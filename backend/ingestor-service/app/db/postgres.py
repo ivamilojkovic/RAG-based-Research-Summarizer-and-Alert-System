@@ -2,24 +2,7 @@ import psycopg2
 import os
 import pika
 import json
-
-schema = """
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
-CREATE TABLE IF NOT EXISTS papers (
-    uuid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    source_id TEXT NOT NULL,
-    source TEXT NOT NULL,
-    title TEXT,
-    summary TEXT,
-    link TEXT,
-    published TIMESTAMP,
-    updated TIMESTAMP,
-    authors TEXT[],
-    categories TEXT[],
-    UNIQUE(source, source_id)
-);
-"""
+from app.db.schema import alerts_schema, papers_schema
 
 def send_to_queue(source, source_id):
     connection = pika.BlockingConnection(

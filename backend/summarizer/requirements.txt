@@ -2,3 +2,4 @@ pika
 openai
 python-dotenv
 groq
+psycopg2-binary

@@ -5,6 +5,7 @@ from qdrant_client.models import PointStruct, VectorParams, Distance, Collection
 import os
 import mlflow
 import uuid
+from datetime import datetime
 
 # Setup
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
@@ -31,7 +32,7 @@ def process_document(source, source_id):
     )
     cur = conn.cursor()
     cur.execute(
-        "SELECT title, summary, published FROM papers WHERE source=%s AND source_id=%s",
+        "SELECT title, summary, published, link FROM papers WHERE source=%s AND source_id=%s",
         (source, source_id)
     )
     result = cur.fetchone()
@@ -41,7 +42,7 @@ def process_document(source, source_id):
         print("Document not found")
         return
 
-    title, summary, published = result
+    title, summary, published, link = result
     title = title.strip() if title else ""
     summary = summary.strip() if summary else ""
 
@@ -70,7 +71,8 @@ def process_document(source, source_id):
                 "chunk_index": i,
                 "text": text,
                 "title": title,
-                "published_timestamp": published.timestamp() 
+                "link": link,
+                "published_timestamp": published.timestamp()
             }
         ))
 

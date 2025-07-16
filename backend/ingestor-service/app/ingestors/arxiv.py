@@ -2,7 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta, timezone
 from app.ingestors.base import AbstractIngestor
-from app.db.postgres import PostgresDB, schema
+from app.db.postgres import PostgresDB
+from app.db.schema import papers_schema
 from app.models.paper import Paper
 from fastapi import FastAPI
 
@@ -20,7 +21,7 @@ class ArxivIngestor(AbstractIngestor):
 
     def parse_documents(self, content):
         soup = BeautifulSoup(content, "xml")
-        cutoff_date = datetime.now().replace(tzinfo=None) - timedelta(days=7)
+        cutoff_date = datetime.now().replace(tzinfo=None) - timedelta(days=self.alert_period)
 
         entries = soup.find_all("entry")
         results = []
@@ -63,7 +64,7 @@ if __name__ == "__main__":
 
     db = PostgresDB()
     with db.conn.cursor() as cursor:
-        cursor.execute(schema)
+        cursor.execute(papers_schema)
 
     ingestor = ArxivIngestor(db, base_url, params)
     ingestor.run()

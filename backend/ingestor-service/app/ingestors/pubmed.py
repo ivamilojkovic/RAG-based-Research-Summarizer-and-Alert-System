@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from app.ingestors.base import AbstractIngestor
-from app.db.postgres import PostgresDB, schema
+from app.db.postgres import PostgresDB
+from app.db.schema import papers_schema
 import os
 import metapub, time
 from metapub import PubMedFetcher
@@ -26,7 +27,7 @@ def extract_relevant_dates(history):
 class PubmedIngestor(AbstractIngestor):
     def fetch_documents(self):
         self.today = datetime.now(timezone.utc)
-        self.cutoff_date = (self.today - timedelta(days=7)).strftime("%Y/%m/%d")
+        self.cutoff_date = (self.today - timedelta(self.alert_period)).strftime("%Y/%m/%d")
 
         metapub.config.ncbi_api_key=os.getenv("NCBI_API_KEY")
 
@@ -84,7 +85,7 @@ class PubmedIngestor(AbstractIngestor):
 if __name__ == "__main__":
     db = PostgresDB()
     with db.conn.cursor() as cursor:
-        cursor.execute(schema)
+        cursor.execute(papers_schema)
 
     ingestor = PubmedIngestor(db)
     ingestor.run()
