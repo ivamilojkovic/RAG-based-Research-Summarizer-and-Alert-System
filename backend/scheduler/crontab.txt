@@ -1,0 +1,5 @@
+# Run Arxiv Ingestor
+0 8 * * 1 curl http://arxiv_ingestor:8000/run
+
+# Run PubMed Ingestor
+5 8 * * 1 curl http://pubmed_ingestor:8000/run

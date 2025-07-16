@@ -1,0 +1,6 @@
+pika
+qdrant-client
+sentence-transformers
+fastapi
+pydantic
+uvicorn

@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+requests
+beautifulsoup4
+psycopg2-binary
+pydantic
+python-dotenv
+metapub
+dotenv
+loguru
+pika
